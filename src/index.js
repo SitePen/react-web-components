@@ -1,8 +1,12 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+// import React from 'react';
+// import ReactDOM from 'react-dom';
+import { Tabs } from './web-components/tabs';
 
-ReactDOM.render(<App />, document.getElementById('root'));
-registerServiceWorker();
+customElements.define('x-tabs', Tabs);
+
+const el = document.createElement('x-tabs');
+document.getElementById('root').appendChild(el);
+
+console.log('hello world!');
+
+module.hot.accept();

@@ -1,0 +1,19 @@
+{
+	"parser": "babel-eslint",
+	"extends": "eslint:recommended",
+	"env": {
+		"browser": true
+	},
+	"parserOptions": {
+		"ecmaVersion": 6,
+		"sourceType": "module"
+	},
+	"rules": {
+		"jsx-quotes": ["error", "prefer-double"],
+		"react/jsx-uses-react": "error",
+		"no-conosle": 0
+	},
+	"plugins": [
+		"react"
+	]
+}
