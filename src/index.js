@@ -1,13 +1,22 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from "./App";
-import { Tabs } from './web-components/tabs';
+// import React from 'react';
+// import ReactDOM from 'react-dom';
+// import App from "./App";
+import './web-components/Tab';
+import './web-components/Tabs';
 
-customElements.define('x-tabs', Tabs);
-
-ReactDOM.render(<App/>, document.getElementById('root'));
-
-// const el = document.createElement('x-tabs');
-// document.getElementById('root').appendChild(el);
+document.getElementById('root').innerHTML = `
+	<x-tabs>
+		<x-tab title="Tab 01">
+			<div>
+				<h1>Tab 01 Content</h1>
+			</div>
+		</x-tab>
+		<x-tab title="Tab 02">
+			<div>
+				<h1>Tab 02 Content</h1>
+			</div>
+		</x-tab>
+	</x-tabs>
+`;
 
 module.hot.accept();
