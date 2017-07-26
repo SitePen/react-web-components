@@ -159,9 +159,6 @@ export class Tabs extends HTMLElement {
 			fn(tab);
 		});
 	};
-
-	adoptedCallback() {
-	}
 }
 
 customElements.define('x-tabs', Tabs);
