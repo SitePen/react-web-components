@@ -10,7 +10,6 @@ export class Tab extends HTMLElement {
 	}
 
 	connectedCallback() {
-		console.log('connectedCallback called');
 		const el = document.createElement('div');
 		el.innerHTML = this.panelTemplate;
 		this.appendChild(el);

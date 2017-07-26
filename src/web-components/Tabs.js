@@ -60,6 +60,7 @@ export class Tabs extends HTMLElement {
 		if (handlers.length) {
 			const ul = this.querySelector('ul');
 			let tab;
+			console.log(`${handlers.length} changes`, handlers);
 			handlers.forEach(([action, node]) => {
 				if (node.nodeName !== 'X-TAB') {
 					return;

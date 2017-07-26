@@ -21,6 +21,7 @@
     "eslint-plugin-react": "^7.1.0",
     "html-webpack-plugin": "^2.29.0",
     "react-hot-loader": "^1.3.1",
+    "react-vdom": "^0.6.2",
     "webpack": "^3.4.0",
     "webpack-dev-server": "^2.6.1"
   },
