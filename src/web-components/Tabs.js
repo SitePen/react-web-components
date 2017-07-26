@@ -7,13 +7,14 @@ export class Tabs extends HTMLElement {
 	tabTemplate = `
 		<li role="presentation">
 			<a href="#" role="tab" data-toggle="tab"></a>
+			<a href="#" class="close">X</a>
 		</li>
 	`;
 
 	selected = null;
-	tabMap = new Map();
-	panelMap = new WeakMap();
-	displayMap = new WeakMap();
+	tabMap = new Map(); // holds <x-tab>
+	panelMap = new WeakMap(); // holds li
+	displayMap = new WeakMap(); // holds css display status
 
 	connectedCallback() {
 		const el = document.createElement('div');
@@ -36,9 +37,13 @@ export class Tabs extends HTMLElement {
 		this.querySelector('ul').removeEventListener('click', this);
 	}
 
-	handleEvent = (event) => {
-		if (event.target.tagName === 'A') {
-			this.setTabStatus(event.target.parentNode);
+	handleEvent = ({target}) => {
+		if (target.tagName === 'A') {
+			if (target.classList.contains('close')) {
+				this.closeTab(target.parentNode);
+			} else {
+				this.setTabStatus(target.parentNode);
+			}
 		}
 	};
 
@@ -47,6 +52,17 @@ export class Tabs extends HTMLElement {
 			this.querySelector('ul').className = newVal;
 		}
 	}
+
+	closeTab = (node) => {
+		const tab = this.tabMap.get(node);
+		tab.parentElement.removeChild(tab);
+		// const { tabMap, panelMap } = this;
+		// const tab = tabMap.get(node);
+		// const panel = panelMap.get(tab);
+		// tabMap.delete(node);
+		// tab.parentElement.removeChild(tab);
+		// panel.parentElement.removeChild(panel);
+	};
 
 	handleMutations = (mutations) => {
 		const handlers = [];
