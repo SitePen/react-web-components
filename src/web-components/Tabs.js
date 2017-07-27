@@ -29,12 +29,14 @@ export class Tabs extends HTMLElement {
 
 		if (!this.mutationObserver) {
 			this.mutationObserver = new MutationObserver(this.handleMutations);
-			this.mutationObserver.observe(this, { childList: true, subtree: true, attributes: true });
+			this.mutationObserver.observe(this, { childList: true, subtree: true });
 		}
 	}
 
 	disconnectedCallback() {
 		this.querySelector('ul').removeEventListener('click', this);
+		this.mutationObserver.disconnect();
+		this.mutationObserver = null;
 	}
 
 	handleEvent = ({target}) => {
