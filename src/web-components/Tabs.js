@@ -29,7 +29,7 @@ export class Tabs extends HTMLElement {
 
 		if (!this.mutationObserver) {
 			this.mutationObserver = new MutationObserver(this.handleMutations);
-			this.mutationObserver.observe(this, { childList: true, attributes: true });
+			this.mutationObserver.observe(this, { childList: true, subtree: true, attributes: true });
 		}
 	}
 
@@ -56,12 +56,6 @@ export class Tabs extends HTMLElement {
 	closeTab = (node) => {
 		const tab = this.tabMap.get(node);
 		tab.parentElement.removeChild(tab);
-		// const { tabMap, panelMap } = this;
-		// const tab = tabMap.get(node);
-		// const panel = panelMap.get(tab);
-		// tabMap.delete(node);
-		// tab.parentElement.removeChild(tab);
-		// panel.parentElement.removeChild(panel);
 	};
 
 	handleMutations = (mutations) => {
@@ -79,7 +73,10 @@ export class Tabs extends HTMLElement {
 			console.log(`${handlers.length} changes`, handlers);
 			handlers.forEach(([action, node]) => {
 				if (node.nodeName !== 'X-TAB') {
-					return;
+					node = node.querySelector('x-tab');
+					if (!node) {
+						return;
+					}
 				}
 
 				if (action === 'add') {

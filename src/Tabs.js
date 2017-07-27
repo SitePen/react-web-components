@@ -9,7 +9,11 @@ export class Tabs extends Component {
 		const children = Array.isArray(this.props.children) ? this.props.children : [ this.props.children ];
 		return (
 			<x-tabs>
-				{children}
+				{children.map((tab, i) =>
+					<span key={tab.key || i}>
+						{tab}
+					</span>
+				)}
 			</x-tabs>
 		);
 	}

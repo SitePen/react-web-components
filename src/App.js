@@ -19,7 +19,7 @@ export class App extends Component {
 		const tabNumber = `${index + 1}`.padStart(2, '0');
 		return (
 			<Tab title={`Tab ${tabNumber}`} key={++keyVal}>
-				Tab Content {tabNumber}
+				<h3>Tab Content {tabNumber}</h3>
 			</Tab>
 		);
 	}
