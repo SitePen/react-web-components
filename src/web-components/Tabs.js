@@ -95,6 +95,7 @@ export class Tabs extends HTMLElement {
 						this.makeInactive(tab);
 					}
 					ul.appendChild(tab);
+					this.dispatchEvent(new CustomEvent('tabadd', {detail: node}));
 				} else {
 					tab = this.panelMap.get(node);
 					tab.parentNode.removeChild(tab);
@@ -106,6 +107,7 @@ export class Tabs extends HTMLElement {
 						const last = ul.querySelector('li:last-child');
 						this.setTabStatus(last);
 					}
+					this.dispatchEvent(new CustomEvent('tabremove', {detail: node}));
 				}
 			});
 		}

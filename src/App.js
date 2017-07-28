@@ -24,11 +24,11 @@ export class App extends Component {
 		);
 	}
 
-	onAddTab = () => {
+	addTab = () => {
 		this.setState({ tabs: [ ...this.state.tabs, this.createTab() ] });
 	};
 
-	onRemoveTab = () => {
+	removeTab = () => {
 		const tabs = this.state.tabs;
 		const newTabs = tabs.slice(1);
 		console.log({oldTabs: tabs, newTabs});
@@ -36,12 +36,16 @@ export class App extends Component {
 		this.setState({ tabs: newTabs });
 	};
 
+	onRemoveTab = ({detail: tab}) => {
+		this.setState({tabs: this.state.tabs.filter(t => t !== tab)});
+	};
+
 	render() {
 		return (
 			<div>
-				<button onClick={this.onAddTab}>Add Tab</button>
-				<button onClick={this.onRemoveTab}>Remove Tab</button>
-				<Tabs>
+				<button onClick={this.addTab}>Add Tab</button>
+				<button onClick={this.removeTab}>Remove Tab</button>
+				<Tabs onTabRemove={this.onRemoveTab}>
 					{this.state.tabs}
 				</Tabs>
 			</div>

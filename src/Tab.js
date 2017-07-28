@@ -6,9 +6,16 @@ export class Tab extends Component {
 		title: PropTypes.string
 	};
 
+	constructor(props) {
+		super(props);
+		this.tabId = this.tabId || Date.now();
+	}
+
 	render() {
 		return (
-			<x-tab {...this.props}>
+			<x-tab
+				{...this.props}
+				data-tab-id={this.tabId}>
 				{this.props.children}
 			</x-tab>
 		);
