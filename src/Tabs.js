@@ -1,52 +1,63 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, Children, cloneElement } from 'react';
+import PropTypes from 'prop-types';
 import './web-components/tabs';
 
 export class Tabs extends Component {
 	static propTypes = {
-		onTabAdd: PropTypes.func,
 		onTabRemove: PropTypes.func
 	};
 
+	_tabMap = new WeakMap();
+
 	componentDidMount() {
-		this.component.addEventListener('tabadd', this.onTabAdd);
 		this.component.addEventListener('tabremove', this.onTabRemove);
 	}
 
 	componentWillUnmount() {
-		this.component.removeEventListener('tabadd', this.onTabAdd);
 		this.component.removeEventListener('tabremove', this.onTabRemove);
 	}
 
 	getTabById(tabId) {
-		const children = Array.isArray(this.props.children) ? this.props.children : [this.props.children];
-		return children.find(tab => {
-			return tabId === tab.tabId;
-		});
+		return this.getChildren().find(tab => tabId == tab.tabId);
 	}
 
-	onTabAdd = (event) => {
-		const tabId = event.detail.tabId;
-		event = Object.assign({}, event, { detail: this.getTabById(tabId) });
-		this.props.onAddTab && this.props.onAddTab(event);
-	};
+	getTabByNode(node) {
+		return this.getChildren().find(tab => tab.component === node);
+	}
 
-	onTabRemove = (event) => {
-		const tabId = event.detail.tabId;
-		event = Object.assign({}, event, { detail: this.getTabById(tabId) });
-		this.props.onTabRemove && this.props.onTabRemove(event);
+	getChildren() {
+		return Children.toArray(this.props.children);
+	}
+
+	onTabRemove = ({detail: component}) => {
+		const tab = this._tabMap.get(component);
+		this.props.onTabRemove && this.props.onTabRemove(tab);
 	};
 
 	_handleRef = (component) => {
 		this.component = component;
-	}
+	};
+
+	_cloneTab = (tab) => {
+		const newTab = cloneElement(tab, {
+			ref: component => {
+				if (component) {
+					const tab = component.component;
+					this._tabMap.set(tab, component);
+				}
+			}
+		});
+
+		return newTab;
+	};
 
 	render() {
-		const children = Array.isArray(this.props.children) ? this.props.children : [ this.props.children ];
+		const children = this.getChildren();
 		return (
 			<x-tabs ref={this._handleRef}>
 				{children.map((tab, i) =>
-					<span key={tab.key || i}>
-						{tab}
+					<span key={tab.key || i} ref={this._handleChildrenRefs}>
+						{this._cloneTab(tab)}
 					</span>
 				)}
 			</x-tabs>

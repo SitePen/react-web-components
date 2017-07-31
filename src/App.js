@@ -29,15 +29,12 @@ export class App extends Component {
 	};
 
 	removeTab = () => {
-		const tabs = this.state.tabs;
-		const newTabs = tabs.slice(1);
-		console.log({oldTabs: tabs, newTabs});
-
-		this.setState({ tabs: newTabs });
+		this.setState({ tabs: [ ...this.state.tabs.slice(1) ] });
 	};
 
-	onRemoveTab = ({detail: tab}) => {
-		this.setState({tabs: this.state.tabs.filter(t => t !== tab)});
+	onRemoveTab = (tab) => {
+		const tabs = this.state.tabs.filter(t => tab !== t);
+		this.setState({ tabs });
 	};
 
 	render() {

@@ -28,6 +28,7 @@ module.exports = {
 		extensions: ['*', '.js', '.jsx']
 	},
 	plugins: [HtmlWebpackPluginConfig],
+	devtool: 'source-map',
 	devServer: {
 		contentBase: './dist',
 		hot: true

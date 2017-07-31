@@ -1,18 +1,11 @@
-export class Tab extends HTMLElement {
-	panelTemplate = `
-		<div role="tabpanel">
-			<content></content>
-		</div>
-	`;
 
+export class Tab extends HTMLElement {
 	constructor() {
 		super();
 	}
 
 	connectedCallback() {
-		const el = document.createElement('div');
-		el.innerHTML = this.panelTemplate;
-		this.appendChild(el);
+		this.setAttribute('role', 'tabpanel');
 	}
 
 	attributeChangedCallback(name, oldVal, newVal) {

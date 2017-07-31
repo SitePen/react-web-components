@@ -1,31 +1,19 @@
 export class Tabs extends HTMLElement {
-	tabsTemplate = `
-		<ul role="tablist"></ul>
-		<div><content></content></div>
-	`;
-
-	tabTemplate = `
-		<li role="presentation">
-			<a href="#" role="tab" data-toggle="tab"></a>
-			<a href="#" class="close">X</a>
-		</li>
-	`;
-
 	selected = null;
 	tabMap = new Map(); // holds <x-tab>
 	panelMap = new WeakMap(); // holds li
 	displayMap = new WeakMap(); // holds css display status
 
 	connectedCallback() {
-		const el = document.createElement('div');
-		el.innerHTML = this.tabsTemplate;
+		const el = document.createElement('ul');
+		el.setAttribute('role', 'tablist');
+		el.classList.add('nav', 'mav-tabs');
+
 		this.insertBefore(el, this.firstChild);
 
 		this.createTabs();
 
-		this.querySelector('ul').addEventListener('click', this);
-
-		this.querySelector('ul').classList.add('nav', 'nav-tabs');
+		el.addEventListener('click', this);
 
 		if (!this.mutationObserver) {
 			this.mutationObserver = new MutationObserver(this.handleMutations);
@@ -40,12 +28,10 @@ export class Tabs extends HTMLElement {
 	}
 
 	handleEvent = ({target}) => {
-		if (target.tagName === 'A') {
-			if (target.classList.contains('close')) {
-				this.closeTab(target.parentNode);
-			} else {
-				this.setTabStatus(target.parentNode);
-			}
+		if (target.classList.contains('close')) {
+			this.closeTab(target.parentNode);
+		} else if (target.tagName === 'A') {
+			this.setTabStatus(target.parentNode);
 		}
 	};
 
@@ -58,6 +44,7 @@ export class Tabs extends HTMLElement {
 	closeTab = (node) => {
 		const tab = this.tabMap.get(node);
 		tab.parentElement.removeChild(tab);
+		this.dispatchEvent(new CustomEvent('tabremove', {detail: tab}));
 	};
 
 	handleMutations = (mutations) => {
@@ -72,7 +59,6 @@ export class Tabs extends HTMLElement {
 		if (handlers.length) {
 			const ul = this.querySelector('ul');
 			let tab;
-			console.log(`${handlers.length} changes`, handlers);
 			handlers.forEach(([action, node]) => {
 				if (node.nodeName !== 'X-TAB') {
 					node = node.querySelector('x-tab');
@@ -82,6 +68,7 @@ export class Tabs extends HTMLElement {
 				}
 
 				if (action === 'add') {
+					console.log('added node', node);
 					tab = this.makeTab(node);
 					this.tabMap.set(tab, node);
 					this.panelMap.set(node, tab);
@@ -95,8 +82,8 @@ export class Tabs extends HTMLElement {
 						this.makeInactive(tab);
 					}
 					ul.appendChild(tab);
-					this.dispatchEvent(new CustomEvent('tabadd', {detail: node}));
 				} else {
+					console.log('removed node', node);
 					tab = this.panelMap.get(node);
 					tab.parentNode.removeChild(tab);
 					this.panelMap.delete(node);
@@ -107,7 +94,6 @@ export class Tabs extends HTMLElement {
 						const last = ul.querySelector('li:last-child');
 						this.setTabStatus(last);
 					}
-					this.dispatchEvent(new CustomEvent('tabremove', {detail: node}));
 				}
 			});
 		}
@@ -139,12 +125,22 @@ export class Tabs extends HTMLElement {
 	};
 
 	makeTab = (node) => {
-		const el = document.createElement('div');
-		el.innerHTML = this.tabTemplate;
-		const tab = el.firstElementChild;
-		const tabAnchor = tab.firstElementChild;
-		tabAnchor.innerHTML = node.attributes && node.attributes.title ? 
-			node.attributes.title.value : node.title;
+		const tab = document.createElement('li')
+		tab.setAttribute('role', 'presentation');
+		// tab.setAttribute('data-tab-id', node.tabId);
+
+		const tabLink = document.createElement('a');
+		tabLink.href = '#';
+		tabLink.setAttribute('role', 'tab');
+		tabLink.setAttribute('data-toggle', 'tab');
+		tab.appendChild(tabLink);
+
+		const closeButton = document.createElement('button');
+		closeButton.classList.add('close');
+		closeButton.textContent = 'X';
+		tab.appendChild(closeButton);
+
+		tabLink.textContent = node.getAttribute('title') || node.title;
 		this.displayMap.set(node, node.style.display);
 		return tab;
 	};

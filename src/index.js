@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from "./App";
 import vdom from 'react-vdom';
+import Tabs from "./Tabs";
+import Tab from "./Tab";
 
 function makeWebComponentExample(root) {
 	const title = document.createElement('h2');
@@ -46,9 +48,19 @@ function makeReactExample(root) {
 	ReactDOM.render(app, el);
 }
 
+function makeSimpleReactExample(root) {
+	ReactDOM.render(
+		<Tabs>
+			<Tab title="Tab 01"><h3>Tab 01 Content</h3></Tab>
+			<Tab title="Tab 02"><h3>Tab 02 Content</h3></Tab>
+		</Tabs>, root);
+}
+
 const webComponentsRoot = document.getElementById('web-components-root');
 const reactRoot = document.getElementById('react-root');
+const simpleReactRoot = document.getElementById('simple-react-root');
 makeWebComponentExample(webComponentsRoot);
 makeReactExample(reactRoot);
+makeSimpleReactExample(simpleReactRoot);
 
 module.hot.accept();
