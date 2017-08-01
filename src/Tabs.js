@@ -8,15 +8,11 @@ export class Tabs extends Component {
 	};
 
 	componentDidMount() {
-		this.component.addEventListener('tabremove', this.onTabRemove);
+		this.component.addEventListener('tabclosed', this.onTabRemove);
 	}
 
 	componentWillUnmount() {
-		this.component.removeEventListener('tabremove', this.onTabRemove);
-	}
-
-	getChildren() {
-		return Children.toArray(this.props.children);
+		this.component.removeEventListener('tabclosed', this.onTabRemove);
 	}
 
 	onTabRemove = ({detail: component}) => {
@@ -28,10 +24,9 @@ export class Tabs extends Component {
 	};
 
 	render() {
-		const children = this.getChildren();
 		return (
 			<x-tabs ref={this._handleRef}>
-				{children.map(tab =>
+				{Children.map(this.props.children, tab =>
 					<span key={tab.props.title} ref={this._handleChildrenRefs}>
 						{tab}
 					</span>

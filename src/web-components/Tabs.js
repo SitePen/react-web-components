@@ -46,7 +46,7 @@ export class Tabs extends HTMLElement {
 	closeTab = (tab) => {
 		const pane = this.tabMap.get(tab);
 		pane.parentElement.removeChild(pane);
-		this.dispatchEvent(new CustomEvent('tabremove', {detail: pane}));
+		this.dispatchEvent(new CustomEvent('tabclosed', {detail: pane}));
 	};
 
 	_addTab(pane) {
