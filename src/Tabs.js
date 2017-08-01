@@ -4,19 +4,19 @@ import './web-components/tabs';
 
 export class Tabs extends Component {
 	static propTypes = {
-		onTabRemove: PropTypes.func
+		onTabClosed: PropTypes.func
 	};
 
 	componentDidMount() {
-		this.component.addEventListener('tabclosed', this.onTabRemove);
+		this.component.addEventListener('tabclosed', this.onTabClosed);
 	}
 
 	componentWillUnmount() {
-		this.component.removeEventListener('tabclosed', this.onTabRemove);
+		this.component.removeEventListener('tabclosed', this.onTabClosed);
 	}
 
-	onTabRemove = ({detail: component}) => {
-		this.props.onTabRemove && this.props.onTabRemove(component.getAttribute('tabId'));
+	onTabClosed = ({detail: component}) => {
+		this.props.onTabClosed && this.props.onTabClosed(component.getAttribute('tabId'));
 	};
 
 	_handleRef = (component) => {

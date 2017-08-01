@@ -3,7 +3,6 @@ import Tab from './Tab';
 import Tabs from './Tabs';
 
 let keyVal = 0;
-
 export class App extends Component {
 	constructor(props) {
 		super(props);
@@ -31,12 +30,11 @@ export class App extends Component {
 	};
 
 	removeTab = () => {
-		this.setState({ tabs: [ ...this.state.tabs.slice(1) ] });
+		this.setState({ tabs: this.state.tabs.slice(1) });
 	};
 
-	onRemoveTab = (tabId) => {
+	onTabClosed = tabId => {
 		const tabs = this.state.tabs.filter(tab => tab.props.tabId != +tabId);
-		console.log(tabs);
 		this.setState({ tabs });
 	};
 
@@ -45,7 +43,7 @@ export class App extends Component {
 			<div>
 				<button onClick={this.addTab}>Add Tab</button>
 				<button onClick={this.removeTab}>Remove Tab</button>
-				<Tabs onTabRemove={this.onRemoveTab}>
+				<Tabs onTabClosed={this.onTabClosed}>
 					{this.state.tabs}
 				</Tabs>
 			</div>
