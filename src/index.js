@@ -12,7 +12,7 @@ function makeWebComponentExample(root) {
 	const el = document.createElement('div');
 	el.innerHTML = `
 		<x-tabs>
-			<x-tab title="Tab 01">
+			<x-tab title="Tab 01" closable>
 				<div>
 					<h3>Tab 01 Content</h3>
 				</div>

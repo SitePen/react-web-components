@@ -1,29 +1,40 @@
-
 export class Tab extends HTMLElement {
-	constructor() {
-		super();
-	}
+	static observedAttributes = [ 'title', 'closable' ];
 
 	connectedCallback() {
 		this.setAttribute('role', 'tabpanel');
+		this.closable = this.hasAttribute('closable');
 	}
 
 	attributeChangedCallback(name, oldVal, newVal) {
 		const parent = this.parentNode;
-		if (name === 'title' && parent.handleTitle) {
-			parent.handleTitle(this, newVal);
+		if (parent) {
+			if (name === 'title' && parent.handleTitle) {
+				parent.handleTitle(this, newVal);
+			} else if (name === 'closable' && parent.handleClosable) {
+				parent.handleClosable(this);
+			}
+		}
+	}
+
+	get closable() {
+		return this.hasAttribute('closable');
+	}
+
+	set closable(value) {
+		if (value) {
+			this.setAttribute('closable', '');
+		} else {
+			this.removeAttribute('closable');
 		}
 	}
 
 	get title() {
-		return this._title;
+		return this.getAttribute('title');
 	}
 
 	set title(value) {
-		if (this._title !== value) {
-			this._title = value;
-			this.setAttribute('title', value);
-		}
+		this.setAttribute('title', value);
 	}
 
 	get active() {

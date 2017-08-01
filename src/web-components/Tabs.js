@@ -132,10 +132,30 @@ export class Tabs extends HTMLElement {
 		});
 	};
 
+	makeTabCloseButton = () => {
+		const closeButton = document.createElement('button');
+		closeButton.classList.add('close');
+		closeButton.textContent = 'X';
+		return closeButton;
+	};
+
+	handleClosable = (pane, tab = this.paneMap.get(pane)) => {
+		if (!tab) {
+			return;
+		}
+
+		const button = tab.querySelector('button.close');
+
+		if (!button && pane.hasAttribute('closable')) {
+			tab.appendChild(this.makeTabCloseButton());
+		} else if (button && !pane.hasAttribute('closable')) {
+			tab.removeChild(button);
+		}
+	};
+
 	makeTab = (pane) => {
 		const tab = document.createElement('li')
 		tab.setAttribute('role', 'presentation');
-		// tab.setAttribute('data-tab-id', node.tabId);
 
 		const tabLink = document.createElement('a');
 		tabLink.href = '#';
@@ -143,10 +163,7 @@ export class Tabs extends HTMLElement {
 		tabLink.setAttribute('data-toggle', 'tab');
 		tab.appendChild(tabLink);
 
-		const closeButton = document.createElement('button');
-		closeButton.classList.add('close');
-		closeButton.textContent = 'X';
-		tab.appendChild(closeButton);
+		this.handleClosable(pane, tab);
 
 		tabLink.textContent = pane.getAttribute('title') || pane.title;
 		this.displayMap.set(pane, pane.style.display);
