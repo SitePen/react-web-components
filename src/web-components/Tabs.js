@@ -1,7 +1,9 @@
 export class Tabs extends HTMLElement {
+	static observedAttributes = [ 'class' ];
+
 	selected = null;
-	tabMap = new Map(); // holds <x-tab>
-	panelMap = new WeakMap(); // holds li
+	tabMap = new Map(); // holds [li, x-tab]
+	paneMap = new WeakMap(); // holds [x-tab, li]
 	displayMap = new WeakMap(); // holds css display status
 
 	connectedCallback() {
@@ -27,6 +29,12 @@ export class Tabs extends HTMLElement {
 		this.mutationObserver = null;
 	}
 
+	attributeChangedCallback(attrName, oldVal, newVal) {
+		if (attrName === 'class') {
+			this.querySelector('ul').className = newVal;
+		}
+	}
+
 	handleEvent = ({target}) => {
 		if (target.classList.contains('close')) {
 			this.closeTab(target.parentNode);
@@ -35,17 +43,44 @@ export class Tabs extends HTMLElement {
 		}
 	};
 
-	attributeChangedCallback(attrName, oldVal, newVal) {
-		if (attrName === 'class') {
-			this.querySelector('ul').className = newVal;
+	closeTab = (tab) => {
+		const pane = this.tabMap.get(tab);
+		pane.parentElement.removeChild(pane);
+		this.dispatchEvent(new CustomEvent('tabremove', {detail: pane}));
+	};
+
+	_addTab(pane) {
+		const ul = this.querySelector('ul');
+		const tab = this.makeTab(pane);
+		this.tabMap.set(tab, pane);
+		this.paneMap.set(pane, tab);
+
+		if (pane.hasAttribute('active')) {
+			this.tabMap.forEach((value, key) => {
+				if (tab === key) {
+					this.makeActive(key);
+				} else {
+					this.makeInactive(key)
+				}
+			});
+		} else {
+			this.makeInactive(tab);
 		}
+		ul.appendChild(tab);
 	}
 
-	closeTab = (node) => {
-		const tab = this.tabMap.get(node);
-		tab.parentElement.removeChild(tab);
-		this.dispatchEvent(new CustomEvent('tabremove', {detail: tab}));
-	};
+	_removeTab(pane) {
+		const tab = this.paneMap.get(pane);
+		tab.parentNode.removeChild(tab);
+		this.paneMap.delete(pane);
+		this.tabMap.delete(tab);
+		this.displayMap.delete(tab);
+
+		if (pane.hasAttribute('active')) {
+			const last = this.querySelector('ul li:last-child');
+			this.setTabStatus(last);
+		}
+	}
 
 	handleMutations = (mutations) => {
 		const handlers = [];
@@ -56,51 +91,24 @@ export class Tabs extends HTMLElement {
 			}
 		});
 
-		if (handlers.length) {
-			const ul = this.querySelector('ul');
-			let tab;
-			handlers.forEach(([action, node]) => {
-				if (node.nodeName !== 'X-TAB') {
-					node = node.querySelector('x-tab');
-					if (!node) {
-						return;
-					}
+		handlers.forEach(([action, pane]) => {
+			if (pane.nodeName !== 'X-TAB') {
+				pane = pane.querySelector('x-tab');
+				if (!pane) {
+					return;
 				}
+			}
 
-				if (action === 'add') {
-					console.log('added node', node);
-					tab = this.makeTab(node);
-					this.tabMap.set(tab, node);
-					this.panelMap.set(node, tab);
-
-					if (node.attributes.active) {
-						this.tabMap.forEach((value, key) => {
-							const fn = tab === key ? this.makeActive : this.makeInactive;
-							fn(key);
-						});
-					} else {
-						this.makeInactive(tab);
-					}
-					ul.appendChild(tab);
-				} else {
-					console.log('removed node', node);
-					tab = this.panelMap.get(node);
-					tab.parentNode.removeChild(tab);
-					this.panelMap.delete(node);
-					this.tabMap.delete(tab);
-					this.displayMap.delete(tab);
-
-					if (node.attributes.active) {
-						const last = ul.querySelector('li:last-child');
-						this.setTabStatus(last);
-					}
-				}
-			});
-		}
+			if (action === 'add') {
+				this._addTab(pane);
+			} else {
+				this._removeTab(pane);
+			}
+		});
 	};
 
 	handleTitle = (panel) => {
-		const tab = this.panelMap.get(panel);
+		const tab = this.paneMap.get(panel);
 
 		if (tab) {
 			tab.textContent = panel.title;
@@ -109,22 +117,22 @@ export class Tabs extends HTMLElement {
 
 	createTabs = () => {
 		const ul = this.querySelector('ul');
-		const tabs = [...this.querySelectorAll('x-tab')];
-		tabs.forEach((node, index) => {
-			const tab = this.makeTab(node);
+		const panes = [...this.querySelectorAll('x-tab')];
+		panes.forEach((pane, index) => {
+			const tab = this.makeTab(pane);
 			ul.appendChild(tab);
-			this.tabMap.set(tab, node);
-			this.panelMap.set(node, tab);
+			this.tabMap.set(tab, pane);
+			this.paneMap.set(pane, tab);
 
 			if (index === 0) {
 				this.makeActive(tab);
 			} else {
-				node.style.display = 'none';
+				pane.style.display = 'none';
 			}
 		});
 	};
 
-	makeTab = (node) => {
+	makeTab = (pane) => {
 		const tab = document.createElement('li')
 		tab.setAttribute('role', 'presentation');
 		// tab.setAttribute('data-tab-id', node.tabId);
@@ -140,24 +148,24 @@ export class Tabs extends HTMLElement {
 		closeButton.textContent = 'X';
 		tab.appendChild(closeButton);
 
-		tabLink.textContent = node.getAttribute('title') || node.title;
-		this.displayMap.set(node, node.style.display);
+		tabLink.textContent = pane.getAttribute('title') || pane.title;
+		this.displayMap.set(pane, pane.style.display);
 		return tab;
 	};
 
 	makeActive = (tab) => {
 		tab.classList.add('active');
-		const node = this.tabMap.get(tab);
-		const naturalDisplay = this.displayMap.get(node);
-		node.style.display = naturalDisplay;
-		node.setAttribute('active', '');
+		const pane = this.tabMap.get(tab);
+		const naturalDisplay = this.displayMap.get(pane);
+		pane.style.display = naturalDisplay;
+		pane.setAttribute('active', '');
 	};
 
 	makeInactive = (tab) => {
 		tab.classList.remove('active');
-		const node = this.tabMap.get(tab);
-		node.style.display = 'none';
-		node.removeAttribute('active');
+		const pane = this.tabMap.get(tab);
+		pane.style.display = 'none';
+		pane.removeAttribute('active');
 	};
 
 	setTabStatus = (active) => {
