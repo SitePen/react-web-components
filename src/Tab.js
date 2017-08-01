@@ -1,30 +1,24 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import './web-components/Tab';
 
-export class Tab extends Component {
-	static propTypes = {
-		title: PropTypes.string,
-		closable: PropTypes.bool
-	};
+let idIndex = 0;
 
-	constructor(props) {
-		super(props);
-		this.tabId = this.tabId || Date.now();
-	}
+export const Tab = props => (
+	<x-tab
+		{...props}
+		tabId={props.tabId || `tab-unique-id-${++idIndex}`}>
+		{props.children}
+	</x-tab>
+);
 
-	_handleRef = (component) => this.component = component;
-
-	render() {
-		return (
-			<x-tab
-				{...this.props}
-				ref={this._handleRef}
-				data-tab-id={this.tabId}>
-				{this.props.children}
-			</x-tab>
-		);
-	}
-}
+Tab.propTypes = {
+	title: PropTypes.string,
+	tabId: PropTypes.oneOfType([
+		PropTypes.string,
+		PropTypes.number
+	]),
+	closable: PropTypes.bool
+};
 
 export default Tab;

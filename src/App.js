@@ -20,7 +20,7 @@ export class App extends Component {
 		const index = ++keyVal;
 		const tabNumber = `${index + 1}`.padStart(2, '0');
 		return (
-			<Tab {...props} title={`Tab ${tabNumber}`} key={index}>
+			<Tab {...props} title={`Tab ${tabNumber}`} key={index} tabId={index}>
 				<h3>Tab Content {tabNumber}</h3>
 			</Tab>
 		);
@@ -34,8 +34,9 @@ export class App extends Component {
 		this.setState({ tabs: [ ...this.state.tabs.slice(1) ] });
 	};
 
-	onRemoveTab = (tab) => {
-		const tabs = this.state.tabs.filter(t => tab !== t);
+	onRemoveTab = (tabId) => {
+		const tabs = this.state.tabs.filter(tab => tab.props.tabId != +tabId);
+		console.log(tabs);
 		this.setState({ tabs });
 	};
 
