@@ -4,7 +4,8 @@ import './web-components/Tab';
 
 export class Tab extends Component {
 	static propTypes = {
-		title: PropTypes.string
+		title: PropTypes.string,
+		closable: PropTypes.bool
 	};
 
 	constructor(props) {

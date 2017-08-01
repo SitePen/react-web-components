@@ -9,16 +9,18 @@ export class App extends Component {
 		super(props);
 		this.state = {
 			tabs: [
-				this.createTab(0),
-				this.createTab(1)
+				this.createTab({closable: true}),
+				this.createTab(),
+				this.createTab({closable: true})
 			]
 		};
 	}
 
-	createTab(index = this.state && this.state.tabs ? this.state.tabs.length : 0) {
+	createTab(props = {}) {
+		const index = ++keyVal;
 		const tabNumber = `${index + 1}`.padStart(2, '0');
 		return (
-			<Tab title={`Tab ${tabNumber}`} key={++keyVal}>
+			<Tab {...props} title={`Tab ${tabNumber}`} key={index}>
 				<h3>Tab Content {tabNumber}</h3>
 			</Tab>
 		);

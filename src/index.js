@@ -51,7 +51,7 @@ function makeReactExample(root) {
 function makeSimpleReactExample(root) {
 	ReactDOM.render(
 		<Tabs>
-			<Tab title="Tab 01"><h3>Tab 01 Content</h3></Tab>
+			<Tab closable={true} title="Tab 01"><h3>Tab 01 Content</h3></Tab>
 			<Tab title="Tab 02"><h3>Tab 02 Content</h3></Tab>
 		</Tabs>, root);
 }
