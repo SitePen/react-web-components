@@ -8,8 +8,6 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 
 module.exports = {
 	entry:[
-		'webpack-dev-server/client?http://localhost:8080',
-		'webpack/hot/only-dev-server',
 		'./src/index.js'
 	],
 	output: {
@@ -21,7 +19,7 @@ module.exports = {
 		loaders: [{
 			test: /\.jsx?$/,
 			exclude: /node_modules/,
-			loader: 'react-hot-loader!babel-loader'
+			loader: 'babel-loader'
 		}]
 	},
 	resolve: {
@@ -30,7 +28,6 @@ module.exports = {
 	plugins: [HtmlWebpackPluginConfig],
 	devtool: 'source-map',
 	devServer: {
-		contentBase: './dist',
-		hot: true
+		contentBase: './dist'
 	}
 };

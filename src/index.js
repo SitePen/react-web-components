@@ -62,5 +62,3 @@ const simpleReactRoot = document.getElementById('simple-react-root');
 makeWebComponentExample(webComponentsRoot);
 makeReactExample(reactRoot);
 makeSimpleReactExample(simpleReactRoot);
-
-module.hot.accept();

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "webpack-dev-server --progress --colors --hot"
+    "start": "webpack-dev-server --progress --colors"
   },
   "dependencies": {
     "prop-types": "^15.5.10",
